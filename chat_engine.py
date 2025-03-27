@@ -12,7 +12,7 @@ llm = AzureChatOpenAI(
     temperature=0,
 )
 
-# Template for Q&A
+
 prompt = PromptTemplate(
     input_variables=["question"],
     template="Answer the following question as clearly as possible:\n\nQuestion: {question}\nAnswer:"
