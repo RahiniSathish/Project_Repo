@@ -9,12 +9,10 @@ import uuid
 init_db()
 db = SessionLocal()
 
-
 st.set_page_config(page_title="Chat Logger", layout="wide")
-st.title("📜 User-based Chat Bot")
+st.title("User-based Chat Bot")
 
-
-st.sidebar.title("👤 Select User")
+st.sidebar.title("Select User")
 users = db.query(User).all()
 user_map = {f"{user.name} ({user.user_id})": user.user_id for user in users}
 selected_user = st.sidebar.selectbox("Select User", list(user_map.keys()))
@@ -25,7 +23,6 @@ if selected_user:
 else:
     st.warning("Please select a user to continue.")
     st.stop()
-
 
 if "user_sessions" not in st.session_state:
     st.session_state["user_sessions"] = {}
@@ -41,14 +38,12 @@ user_session = st.session_state["user_sessions"][user_id]
 
 top_left, top_right = st.columns([6, 1])
 with top_right:
-    if st.button("➕ Start New Session"):
+    if st.button("Start New Session"):
         st.session_state["user_sessions"][user_id] = {
             "session_id": str(uuid.uuid4()),
             "conversation_id": str(uuid.uuid4())
         }
-        st.success("🔁 New session started!")
-
-
+        st.success("New session started!")
 question = st.text_input("Ask a question:")
 
 if st.button("Submit") and question.strip():
@@ -64,16 +59,16 @@ if st.button("Submit") and question.strip():
     db.add(convo)
     db.commit()
 
-    st.success("✅ Answer:")
+    st.success("Answer:")
     st.markdown(answer)
 
 
 st.divider()
-st.subheader(f"🧾 Conversation History for {selected_user}")
+st.subheader(f"Conversation History for {selected_user}")
 
 history = db.query(Conversation).filter_by(user_id=user_id).order_by(Conversation.id.desc()).all()
 
 for entry in history:
     with st.expander(f"Q: {entry.question}"):
         st.markdown(f"**A:** {entry.answer}")
-        st.caption(f"🧑‍💻 User ID: {entry.user_id} | 💬 Session: {entry.session_id} | 📌 Conversation: {entry.conversation_id}")
+        st.caption(f"User ID: {entry.user_id} | Session: {entry.session_id} |  Conversation: {entry.conversation_id}")
